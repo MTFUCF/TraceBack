@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="Local proof-of-concept interface for reviewing a seven-hop identity investigation."
+    />
+    <title>TraceBack investigation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}" />
+    <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#investigation-results">Skip to investigation results</a>
+
+    <main class="app-shell">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Local security investigation POC</p>
+          <h1>TraceBack</h1>
+          <p class="lede">
+            Assess the evidence linking an observed action to its likely request path.
+            Missing telemetry is shown as uncertainty, never filled in as fact.
+          </p>
+        </div>
+        <div class="service-status" id="service-status" role="status" aria-live="polite">
+          Checking local service
+        </div>
+      </header>
+
+      <div class="workspace">
+        <aside class="panel control-panel" aria-labelledby="investigation-form-title">
+          <div class="panel-heading">
+            <p class="section-index" aria-hidden="true">01</p>
+            <div>
+              <h2 id="investigation-form-title">Investigation scope</h2>
+              <p>Inputs describe the request. They are not observed evidence.</p>
+            </div>
+          </div>
+
+          <form id="investigate-form" novalidate>
+            <div class="field">
+              <label for="target">Requested target</label>
+              <p class="field-help" id="target-help">
+                Enter an identity, resource, or action identifier, up to 256 characters.
+              </p>
+              <input
+                id="target"
+                name="target"
+                type="text"
+                maxlength="256"
+                autocomplete="off"
+                spellcheck="false"
+                aria-describedby="target-help target-error"
+                required
+              />
+              <p class="field-error" id="target-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="mode">Permission model</label>
+              <select id="mode" name="mode">
+                <option value="delegated_permissions">Delegated permissions</option>
+                <option value="application_permissions">Application permissions</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="timespan">Telemetry window</label>
+              <select id="timespan" name="timespan">
+                <option value="P7D">Previous 7 days</option>
+                <option value="P30D" selected>Previous 30 days</option>
+                <option value="P90D">Previous 90 days</option>
+              </select>
+            </div>
+
+            <button class="primary-action" id="submit-button" type="submit">
+              <span class="button-label">Run investigation</span>
+              <span class="button-progress" aria-hidden="true"></span>
+            </button>
+          </form>
+
+          <div class="privacy-note">
+            <strong>Ephemeral by design.</strong>
+            <span>This page does not save investigation inputs or responses.</span>
+          </div>
+        </aside>
+
+        <section
+          class="panel results-panel"
+          id="investigation-results"
+          aria-labelledby="results-heading"
+          aria-busy="false"
+        >
+          <div class="results-heading-row">
+            <div class="panel-heading">
+              <p class="section-index" aria-hidden="true">02</p>
+              <div>
+                <h2 id="results-heading" tabindex="-1">Evidence assessment</h2>
+                <p>Status is reported before confidence throughout the chain.</p>
+              </div>
+            </div>
+            <span class="state-pill state-idle" id="result-state">Not started</span>
+          </div>
+
+          <div class="state-card state-idle" id="state-panel">
+            <h3 id="state-title">Ready for an investigation</h3>
+            <p id="state-detail">
+              Submit a target to review the seven expected hops, their six links, and
+              any telemetry gaps.
+            </p>
+          </div>
+
+          <div id="result-content"></div>
+        </section>
+      </div>
+    </main>
+
+    <div class="visually-hidden" id="announcement" role="status" aria-live="polite"></div>
+    <noscript>
+      <div class="noscript-message">
+        JavaScript is required to submit and render local investigations.
+      </div>
+    </noscript>
+  </body>
+</html>
